@@ -1,19 +1,18 @@
-import os
 import streamlit as st
 import google.generativeai as genai
 
-# Set your API key using Streamlit secrets (configured on Streamlit Cloud)
-GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
-genai.configure(api_key=GOOGLE_API_KEY)
+# 🔑 Paste your API key directly here
+GOOGLE_API_KEY = "AIzaSyBkqGIHS7iY8fLt5N__OEJELyD8aMoVVOs"
 
-# Initialize model
+# Configure Gemini
+genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-# Clean article
+# Function to clean article
 def clean_article(text, tone):
     prompt = f"""
-    Clean the following Urdu article:
-    - Fix grammar and structure
+    Clean the following Urdu news article:
+    - Fix grammar and sentence structure
     - Apply a {tone} tone
 
     Article:
@@ -22,10 +21,10 @@ def clean_article(text, tone):
     response = model.generate_content(prompt)
     return response.text.strip()
 
-# Generate two headlines
+# Function to generate 2 headlines
 def generate_headlines(text, tone):
     prompt = f"""
-    Generate two headlines for this Urdu article in a {tone} tone. Each under 15 words.
+    Generate two headlines (15 words max each) in {tone} tone for this Urdu article.
 
     Article:
     \"\"\"{text}\"\"\"
@@ -38,12 +37,12 @@ def generate_headlines(text, tone):
     headlines = [line.replace("1.", "").replace("2.", "").strip() for line in lines if line.strip()]
     return headlines[:2]
 
-# Streamlit UI
+# UI
 st.set_page_config(page_title="📰 Urdu News Headline Generator")
 st.title("📰 Urdu News Headline Generator")
 
-article = st.text_area("Paste Urdu News Article:", height=200)
-tone = st.selectbox("Select Tone:", ["Neutral", "Formal", "Dramatic", "Funny", "Sensational", "Inspiring"])
+article = st.text_area("📝 Paste Urdu News Article:", height=200)
+tone = st.selectbox("🎭 Select Tone:", ["Neutral", "Formal", "Dramatic", "Funny", "Sensational", "Inspiring"])
 
 if st.button("Generate"):
     if article.strip():
